@@ -5,6 +5,24 @@
 *.env
 *.venv/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+.eggs/
+*.egg-info/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+ruff_cache/
+
 # Node / frontend
 node_modules/
 npm-debug.log*
@@ -26,3 +44,4 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
