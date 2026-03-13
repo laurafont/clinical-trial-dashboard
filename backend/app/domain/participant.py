@@ -2,25 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from enum import StrEnum
 from uuid import UUID
 
-
-class StudyGroup(StrEnum):
-    TREATMENT = "treatment"
-    CONTROL = "control"
-
-
-class ParticipantStatus(StrEnum):
-    ACTIVE = "active"
-    COMPLETED = "completed"
-    WITHDRAWN = "withdrawn"
-
-
-class Gender(StrEnum):
-    FEMALE = "F"
-    MALE = "M"
-    OTHER = "Other"
+from app.domain.enums import Gender, ParticipantStatus, StudyGroup
 
 
 @dataclass(frozen=True)

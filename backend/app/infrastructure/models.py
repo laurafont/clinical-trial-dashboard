@@ -1,4 +1,3 @@
-import enum
 from datetime import date
 from uuid import UUID as UUIDType, uuid4
 
@@ -6,20 +5,8 @@ from sqlalchemy import Date, Enum, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.domain.enums import Gender, ParticipantStatus, StudyGroup
 from app.infrastructure.database import Base
-
-
-class StudyGroup(str, enum.Enum):
-    TREATMENT = "treatment"
-    CONTROL = "control"
-class ParticipantStatus(str, enum.Enum):
-    ACTIVE = "active"
-    COMPLETED = "completed"
-    WITHDRAWN = "withdrawn"
-class Gender(str, enum.Enum):
-    F = "F"
-    M = "M"
-    OTHER = "Other"
 
 
 class ParticipantModel(Base):
