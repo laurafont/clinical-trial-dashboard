@@ -6,6 +6,9 @@ class LoginRequest(BaseModel):
     password: str = Field(..., min_length=6, max_length=255)
 
 
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+class LoginSuccess(BaseModel):
+    message: str = "ok"
+
+
+class SessionUser(BaseModel):
+    username: str

@@ -13,5 +13,10 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
+    # HTTP-only cookie for JWT (cookie-based auth)
+    COOKIE_NAME: str = "access_token"
+    COOKIE_SECURE: bool = False  # True in production (HTTPS)
+    COOKIE_SAMESITE: str = "lax"
+
 
 settings = Settings()

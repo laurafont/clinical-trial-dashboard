@@ -1,9 +1,5 @@
 const BASE_URL = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
 
-function getToken(): string | null {
-  return localStorage.getItem("token");
-}
-
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -35,15 +31,11 @@ export async function request<T>(
     "Content-Type": "application/json",
   };
 
-  const token = getToken();
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
   const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    credentials: "include",
   });
 
   if (!response.ok) {

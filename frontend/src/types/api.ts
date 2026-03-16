@@ -13,9 +13,12 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
+export interface LoginSuccess {
+  message: string;
+}
+
+export interface SessionUser {
+  username: string;
 }
 
 // Participants

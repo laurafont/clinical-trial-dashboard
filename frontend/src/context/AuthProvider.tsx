@@ -1,37 +1,33 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { request } from "../api/client";
-import type { TokenResponse } from "../types/api";
+import type { LoginSuccess, SessionUser } from "../types/api";
 import { AuthContext } from "./AuthContext";
 import type { AuthContextValue } from "./AuthContext";
-
-const TOKEN_KEY = "token";
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [token, setToken] = useState<string | null>(
-    () => localStorage.getItem(TOKEN_KEY),
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
-    } else {
-      localStorage.removeItem(TOKEN_KEY);
-    }
-  }, [token]);
+    request<SessionUser>("/auth/me")
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false))
+      .finally(() => setInitialized(true));
+  }, []);
 
   const login = useCallback(async (username: string, password: string) => {
     setError(null);
     try {
-      const data = await request<TokenResponse>("/auth/login", {
+      await request<LoginSuccess>("/auth/login", {
         method: "POST",
         body: { username, password },
       });
-      setToken(data.access_token);
+      setIsAuthenticated(true);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Login failed";
@@ -40,21 +36,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    setToken(null);
+  const logout = useCallback(async () => {
     setError(null);
+    try {
+      await request("/auth/logout", { method: "POST" });
+    } finally {
+      setIsAuthenticated(false);
+    }
   }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      token,
-      isAuthenticated: token !== null,
+      isAuthenticated,
       error,
       login,
       logout,
     }),
-    [token, error, login, logout],
+    [isAuthenticated, error, login, logout],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {initialized ? children : null}
+    </AuthContext.Provider>
+  );
 }
