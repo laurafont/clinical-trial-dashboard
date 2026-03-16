@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "../components/ui/button";
+import { ROUTES } from "../constants/routes";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useAuth } from "../context/useAuth";
@@ -33,7 +34,7 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
       await login(data.username, data.password);
-      navigate("/participants");
+      navigate(ROUTES.PARTICIPANTS);
     } catch {
       setError("root", {
         message: "Invalid username or password.",

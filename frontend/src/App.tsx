@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import { ROUTES } from "./constants/routes";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
@@ -10,11 +11,11 @@ import "./App.css";
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
       <Route path="/" element={<ProtectedRoute />}>
-        <Route index element={<Navigate to="/participants" replace />} />
-        <Route path="participants" element={<ParticipantsPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
+        <Route index element={<Navigate to={ROUTES.PARTICIPANTS} replace />} />
+        <Route path={ROUTES.PARTICIPANTS.slice(1)} element={<ParticipantsPage />} />
+        <Route path={ROUTES.DASHBOARD.slice(1)} element={<DashboardPage />} />
       </Route>
     </Routes>
   );
