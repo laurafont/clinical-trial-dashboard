@@ -23,6 +23,14 @@ export function isApiError(err: unknown): err is ApiError {
   );
 }
 
+// Registered by AuthProvider on mount; called whenever any request receives a 401.
+// Clears auth state so ProtectedRoute redirects to login (e.g. expired cookie mid-session).
+let onUnauthorized: (() => void) | null = null;
+
+export function setOnUnauthorizedCallback(cb: () => void): void {
+  onUnauthorized = cb;
+}
+
 export async function request<T>(
   path: string,
   { method = "GET", body }: RequestOptions = {},
@@ -39,6 +47,10 @@ export async function request<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      onUnauthorized?.();
+    }
+
     let message = response.statusText;
     try {
       const data = (await response.json()) as { detail?: string };

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { request } from "../api/client";
+import { request, setOnUnauthorizedCallback } from "../api/client";
 import type { LoginSuccess, SessionUser } from "../types/api";
 import { AuthContext } from "./AuthContext";
 import type { AuthContextValue } from "./AuthContext";
@@ -14,6 +14,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
+    // Clear auth state on any 401 so ProtectedRoute redirects to login
+    // (handles mid-session cookie expiry). Safe for login/me 401s since
+    // isAuthenticated is already false in those cases.
+    setOnUnauthorizedCallback(() => setIsAuthenticated(false));
+
     request<SessionUser>("/auth/me")
       .then(() => setIsAuthenticated(true))
       .catch(() => setIsAuthenticated(false))
