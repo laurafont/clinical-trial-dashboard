@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { AddParticipantModal } from "../components/participants/AddParticipantModal";
 import { ParticipantTable } from "../components/participants/ParticipantTable";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { useParticipants } from "../hooks/useParticipants";
 
@@ -16,9 +17,10 @@ export default function ParticipantsPage() {
         <Button onClick={() => setModalOpen(true)}>Add participant</Button>
       </div>
       {error && (
-        <p className="text-sm text-destructive" role="alert">
-          {error}
-        </p>
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       <ParticipantTable participants={participants} loading={loading} />
 
