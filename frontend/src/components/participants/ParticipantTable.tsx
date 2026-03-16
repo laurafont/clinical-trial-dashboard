@@ -1,4 +1,8 @@
-import type { ParticipantRead, ParticipantStatus, StudyGroup } from "../../types/api";
+import type {
+  ParticipantRead,
+  ParticipantStatus,
+  StudyGroup,
+} from "../../types/api";
 import { Badge } from "../ui/badge";
 import {
   Table,
@@ -8,6 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+
+/** Formats an ISO date string ("YYYY-MM-DD") as a locale-aware date, e.g. "Jan 15, 2024". */
+function formatDate(iso: string): string {
+  // Parse as UTC noon to avoid timezone-offset shifting the day.
+  const date = new Date(`${iso}T12:00:00Z`);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 function StudyGroupBadge({ value }: { value: StudyGroup }) {
   return (
@@ -46,7 +62,10 @@ interface ParticipantTableProps {
   loading?: boolean;
 }
 
-export function ParticipantTable({ participants, loading }: ParticipantTableProps) {
+export function ParticipantTable({
+  participants,
+  loading,
+}: ParticipantTableProps) {
   if (loading) {
     return <TableSkeleton />;
   }
@@ -66,7 +85,10 @@ export function ParticipantTable({ participants, loading }: ParticipantTableProp
       <TableBody>
         {participants.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={6} className="text-center text-muted-foreground">
+            <TableCell
+              colSpan={6}
+              className="text-center text-muted-foreground"
+            >
               No participants yet.
             </TableCell>
           </TableRow>
@@ -77,7 +99,7 @@ export function ParticipantTable({ participants, loading }: ParticipantTableProp
               <TableCell>
                 <StudyGroupBadge value={p.study_group} />
               </TableCell>
-              <TableCell>{p.enrollment_date}</TableCell>
+              <TableCell>{formatDate(p.enrollment_date)}</TableCell>
               <TableCell>
                 <StatusBadge value={p.status} />
               </TableCell>

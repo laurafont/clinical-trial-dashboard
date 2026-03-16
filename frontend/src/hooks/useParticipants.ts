@@ -15,7 +15,9 @@ export function useParticipants() {
       const data = await participantService.getParticipants();
       setParticipants(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load participants");
+      setError(
+        err instanceof Error ? err.message : "Failed to load participants",
+      );
     } finally {
       setLoading(false);
     }
@@ -28,7 +30,9 @@ export function useParticipants() {
         await participantService.createParticipant(data);
         await fetchParticipants();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to add participant");
+        setError(
+          err instanceof Error ? err.message : "Failed to add participant",
+        );
         throw err;
       }
     },
