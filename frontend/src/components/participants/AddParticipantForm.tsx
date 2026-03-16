@@ -46,10 +46,12 @@ type FormFields = z.infer<typeof formSchema>;
 
 interface AddParticipantFormProps {
   addParticipant: (data: ParticipantCreate) => Promise<void>;
+  onSuccess?: () => void;
 }
 
 export function AddParticipantForm({
   addParticipant,
+  onSuccess,
 }: AddParticipantFormProps) {
   const {
     register,
@@ -65,6 +67,7 @@ export function AddParticipantForm({
     try {
       await addParticipant(data);
       reset();
+      onSuccess?.();
     } catch {
       setError("root", {
         message: "Failed to add participant. Please try again.",
