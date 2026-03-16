@@ -8,16 +8,37 @@ import { Label } from "../ui/label";
 import { Select } from "../ui/select";
 import type { ParticipantCreate } from "../../types/api";
 
+const MIN_ENROLLMENT_YEAR = 1900;
+
 const formSchema = z.object({
   subject_id: z.string().min(1, { message: "Subject ID is required" }),
-  study_group: z.enum(["treatment", "control"], { message: "Study group is required" }),
-  enrollment_date: z.string().min(1, { message: "Enrollment date is required" }),
-  status: z.enum(["active", "completed", "withdrawn"], { message: "Status is required" }),
+  study_group: z.enum(["treatment", "control"], {
+    message: "Study group is required",
+  }),
+  enrollment_date: z
+    .string()
+    .min(1, { message: "Enrollment date is required" })
+    .refine(
+      (val) => {
+        const date = new Date(val);
+        if (Number.isNaN(date.getTime())) return false;
+        const year = date.getUTCFullYear();
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        return year >= MIN_ENROLLMENT_YEAR && date <= today;
+      },
+      {
+        message: `Enrollment date must be a valid date between ${MIN_ENROLLMENT_YEAR} and today (not in the future).`,
+      },
+    ),
+  status: z.enum(["active", "completed", "withdrawn"], {
+    message: "Status is required",
+  }),
   age: z
     .number({ message: "Age is required" })
     .int()
     .min(0, "Age must be 0 or more")
-    .max(150, "Age must be 150 or less"),
+    .max(120, "Age must be 120 or less"),
   gender: z.enum(["F", "M", "Other"], { message: "Gender is required" }),
 });
 
@@ -27,7 +48,9 @@ interface AddParticipantFormProps {
   addParticipant: (data: ParticipantCreate) => Promise<void>;
 }
 
-export function AddParticipantForm({ addParticipant }: AddParticipantFormProps) {
+export function AddParticipantForm({
+  addParticipant,
+}: AddParticipantFormProps) {
   const {
     register,
     handleSubmit,
@@ -68,7 +91,11 @@ export function AddParticipantForm({ addParticipant }: AddParticipantFormProps) 
 
         <div className="space-y-2">
           <Label htmlFor="study_group">Study Group</Label>
-          <Select id="study_group" {...register("study_group")} aria-invalid={!!errors.study_group}>
+          <Select
+            id="study_group"
+            {...register("study_group")}
+            aria-invalid={!!errors.study_group}
+          >
             <option value="">Select...</option>
             <option value="treatment">Treatment</option>
             <option value="control">Control</option>
@@ -97,7 +124,11 @@ export function AddParticipantForm({ addParticipant }: AddParticipantFormProps) 
 
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
-          <Select id="status" {...register("status")} aria-invalid={!!errors.status}>
+          <Select
+            id="status"
+            {...register("status")}
+            aria-invalid={!!errors.status}
+          >
             <option value="">Select...</option>
             <option value="active">Active</option>
             <option value="completed">Completed</option>
@@ -129,7 +160,11 @@ export function AddParticipantForm({ addParticipant }: AddParticipantFormProps) 
 
         <div className="space-y-2">
           <Label htmlFor="gender">Gender</Label>
-          <Select id="gender" {...register("gender")} aria-invalid={!!errors.gender}>
+          <Select
+            id="gender"
+            {...register("gender")}
+            aria-invalid={!!errors.gender}
+          >
             <option value="">Select...</option>
             <option value="F">F</option>
             <option value="M">M</option>
